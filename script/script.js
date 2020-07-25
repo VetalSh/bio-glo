@@ -56,8 +56,8 @@ const sendForm = () => {
   };
 
   // Обработчики событий корректного ввода данных в форму
-  form1.addEventListener('change', checkForm1);
-  form2.addEventListener('change', checkForm2);
+  form1.addEventListener('input', checkForm1);
+  form2.addEventListener('input', checkForm2);
 
   // Функция очистки подписи под формой
   const updateForm = () => {
@@ -143,3 +143,43 @@ const sendForm = () => {
 };
 
 sendForm();
+
+// Часто задаваемые вопросы, аккордеон
+const questions = () => {
+  const accordionTwo = document.getElementById('accordion-two'),
+        headingOne = document.getElementById('headingOne-two'),
+        headingTwo = document.getElementById('headingTwo-two'),
+        headingThree = document.getElementById('headingThree-two'),
+        collapseOne = document.getElementById('collapseOne-two'),
+        collapseTwo = document.getElementById('collapseTwo-two'),
+        collapseThree = document.getElementById('collapseThree-two');
+  let arrayPanel = [collapseOne, collapseTwo, collapseThree];
+
+  const deletePanel = () => {
+    arrayPanel.forEach((item) => {
+      item.classList.remove('in');
+    });    
+  };
+
+  accordionTwo.addEventListener('click', (event) => {
+    event.preventDefault();
+    let target = event.target;
+    target = target.closest('.panel-heading');
+
+    if (target === headingOne) {
+      deletePanel();
+      collapseOne.classList.add('in');
+    } else if (target === headingTwo) {
+      deletePanel();
+      collapseTwo.classList.add('in');
+    } else if (target === headingThree) {
+      deletePanel();
+      collapseThree.classList.add('in');
+    }
+  });
+};
+
+questions();
+
+// Конструктор-калькулятор в виде аккордеона
+
