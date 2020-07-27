@@ -262,11 +262,6 @@ const calculator = () => {
         calcResult = document.getElementById('calc-result'),
         formControl = document.querySelectorAll('.form-control'),
         distance = document.getElementById('distance');
-            
-  // все данные из калькулятора сохранять в объект
-  // const getResult = () => {
-  //   console.log('resultDATA: ', resultDATA);
-  // };
 
   let options = [];
 
@@ -337,7 +332,6 @@ const calculator = () => {
     
     calcResult.value = result;
     resultDATA.totalPrice = result;
-    // getResult();
   };
 
   priceCalculation();
@@ -445,7 +439,45 @@ const calculator = () => {
     });
   };
 
-
 };
 
 calculator();
+
+// Секция "Акции и спецпредложения", кнопка "Больше"
+const sentenceSection = () => {
+  const sentence = document.querySelector('.sentence');
+  const addSentenceBtn = document.querySelector('.add-sentence-btn'),
+  hiddenItems = document.querySelectorAll('.hidden-item'),
+  popupDiscount = document.querySelector('.popup-discount');
+
+  sentence.addEventListener('click', (event) => {
+    let target = event.target;
+
+    if (target.matches('.add-sentence-btn')) {
+      addSentenceBtn.style.display = 'none';
+      hiddenItems.forEach((elem) => {
+        elem.classList.remove('visible-sm-block');
+        elem.classList.remove('hidden');
+      });
+    }
+    if (target.matches('.discount-btn')) {
+      popupDiscount.style.display = 'block';
+    }
+  });
+
+  // Закрытие формы popupDiscount
+  popupDiscount.addEventListener('click', (event) => {
+    event.preventDefault();
+    let target = event.target;
+    if (target.matches('.popup-close')) {
+      popupDiscount.style.display = 'none';
+    }
+    // Закрываем форму по нажатию на подложку
+    if (target.matches('.popup-discount')) {
+      popupDiscount.style.display = 'none';
+    }
+  });
+
+};
+
+sentenceSection();
