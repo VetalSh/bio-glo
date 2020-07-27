@@ -189,21 +189,23 @@
                                     </select>
                                 </div>
 
-                                <div class="title-text">второй колодец (дренажный)</div>
-                                <div class="select-box">
-                                    <p><strong>Диаметр</strong></p>
-                                    <select class="form-control expand">
-                                        <option>1.4 метра</option>
-                                        <option>2 метра</option>
-                                    </select>
-                                </div>
-                                <div class="select-box">
-                                    <p><strong>Количество колец</strong></p>
-                                    <select class="form-control expand">
-                                        <option>1 штука</option>
-                                        <option>2 штуки</option>
-                                        <option>3 штуки</option>
-                                    </select>
+                                <div class="second-well">
+                                    <div class="title-text">второй колодец (дренажный)</div>
+                                    <div class="select-box">
+                                        <p><strong>Диаметр</strong></p>
+                                        <select class="form-control expand">
+                                            <option>1.4 метра</option>
+                                            <option>2 метра</option>
+                                        </select>
+                                    </div>
+                                    <div class="select-box">
+                                        <p><strong>Количество колец</strong></p>
+                                        <select class="form-control expand">
+                                            <option>1 штука</option>
+                                            <option>2 штуки</option>
+                                            <option>3 штуки</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <a class="button construct-btn" data-toggle="collapse" data-parent="#accordion"
                                    href="#collapseThree"><span>Следующий шаг</span></a>
@@ -253,7 +255,7 @@
                              aria-labelledby="headingFour">
                             <div class="panel-body">
                                 <p>Введите расстояние до дома</p>
-                                <input type="text">
+                                <input type="text" id="distance">
                                 <button class="button construct-btn call-btn">Получить расчет и скидку</button>
                             </div>
                         </div>
@@ -486,14 +488,14 @@
     <div class="popup-dialog">
         <div class="popup-content">
             <!-- <div class="popup-form"> -->
-            <form class="capture-form text-center">
+            <form class="capture-form text-center" id="calc-form">
                 <span class="circle"><button class="popup-close">&times;</button></span>
                 <label for="name_1">Как к вам обращаться</label>
                 <input type="text" id="name_1" name="user_name" placeholder="Ваше имя" required>
                 <label for="phone_1">Ваш телефон для получения скидки</label>
                 <input class="phone-user" type="text" id="phone_1" name="user_phone" placeholder="+7(___)___-__-__"
                        required>
-                <button class="button capture-form-btn" name="submit" type="submit">Получить расчет и скидку</button>
+                <button class="button capture-form-btn" name="submit" type="submit" id="send-data-btn">Получить расчет и скидку</button>
                 <p class="small">Вы получите расчет стоимости с учетом выбора <br>подходящего объема септика. типа
                     грунта, <br> расположения объектов на участке, уровня грунтовых <br> вод, типа фундамента дома и еще
                     7 параметров</p>

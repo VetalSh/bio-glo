@@ -710,6 +710,11 @@ header .logo img {
   font-size: 1.4rem
 }
 
+/* По умолчанию второй колодец скрыт */
+.second-well {
+  display: none;
+}
+
 #calc-result {
   display: block;
   width: 32rem;
