@@ -11,7 +11,7 @@ const togglePopUp = () => {
         popupDiscount = document.querySelector('.popup-discount');
   
   body.addEventListener('click', (event) => {
-    event.preventDefault();
+    // event.preventDefault();
     let target = event.target;
     
     if (target.matches('.add-sentence-btn')) {
@@ -43,6 +43,7 @@ const togglePopUp = () => {
     }
 
     if (target.matches('.popup-close')) {
+      event.preventDefault();
       popupDiscount.style.display = 'none';
       return;
     }
@@ -64,7 +65,8 @@ const sendForm = () => {
           successMessage = 'Спасибо! Мы скоро с вами свяжемся!';
 
   const form1 = document.getElementById('form1'),
-        form2 = document.getElementById('form2');
+        form2 = document.getElementById('form2'),
+        discountForm = document.getElementById('discount-form');
 
   const statusMessage = document.createElement('div');
   statusMessage.style.cssText = 'font-size: 2rem;';
@@ -85,10 +87,20 @@ const sendForm = () => {
       target.value = target.value.replace(/[^а-яё\s]/gi, '');
     }
   };
+  const checkDiscountForm = (event) => {
+    let target = event.target;
+    if (target.matches('#phone_11')) {
+      target.value = target.value.replace(/(?<!^)\+|[^\d+]/g, '');
+    } else
+    if (target.matches('#name_11')) {
+      target.value = target.value.replace(/[^а-яё\s]/gi, '');
+    }
+  };
 
   // Обработчики событий корректного ввода данных в форму
   form1.addEventListener('input', checkForm1);
   form2.addEventListener('input', checkForm2);
+  discountForm.addEventListener('input', checkDiscountForm);
 
   // Функция очистки подписи под формой
   const updateForm = () => {
@@ -157,6 +169,40 @@ const sendForm = () => {
         console.error(error);
         statusMessage.textContent = errorMessage;
         clearForm2();
+        setTimeout(updateForm, 3000);
+      });
+  });
+
+  // Функция очистки discountForm
+  const clearDiscountForm = () => {      
+    const discountFormName = document.getElementById('name_11'),
+    discountFormPhone = document.getElementById('phone_11');
+    discountFormName.value = '';
+    discountFormPhone.value = '';
+  };
+  // discountForm
+  discountForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    discountForm.appendChild(statusMessage);
+    statusMessage.textContent = loadMessage;
+    const formData = new FormData(discountForm);
+    let body = {};
+    formData.forEach((val, key) => {
+      body[key] = val;
+    });
+    postData(body)
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error('status network not 200');
+        }
+        statusMessage.textContent = successMessage;
+        clearDiscountForm();
+        setTimeout(updateForm, 3000);
+      })
+      .catch((error) => {
+        console.error(error);
+        statusMessage.textContent = errorMessage;
+        clearDiscountForm();
         setTimeout(updateForm, 3000);
       });
   });
