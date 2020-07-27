@@ -5,22 +5,53 @@ const togglePopUp = () => {
   const body = document.querySelector('body'),
         popupCall = document.querySelector('.popup-call'),
         popupClose = document.querySelector('.popup-close');
+
+  const addSentenceBtn = document.querySelector('.add-sentence-btn'),
+        hiddenItems = document.querySelectorAll('.hidden-item'),
+        popupDiscount = document.querySelector('.popup-discount');
   
   body.addEventListener('click', (event) => {
+    event.preventDefault();
     let target = event.target;
+    
+    if (target.matches('.add-sentence-btn')) {
+      addSentenceBtn.style.display = 'none';
+      hiddenItems.forEach((elem) => {
+        elem.classList.remove('visible-sm-block');
+        elem.classList.remove('hidden');
+        return;
+      });
+    }
+    if (target.matches('.discount-btn')) {
+      popupDiscount.style.display = 'block';
+      return;
+    }
+
     if (target.matches('.call-btn')) {
       popupCall.style.display = 'block';
       return;
-    } else
+    }
     if (target === popupClose) {
       event.preventDefault();
       popupCall.style.display = 'none';
       return;
-    } else 
+    } 
     // Закрываем форму по нажатию на подложку
     if (target.matches('.popup-call')) {
       popupCall.style.display = 'none';
+      return;
     }
+
+    if (target.matches('.popup-close')) {
+      popupDiscount.style.display = 'none';
+      return;
+    }
+    // Закрываем форму по нажатию на подложку
+    if (target.matches('.popup-discount')) {
+      popupDiscount.style.display = 'none';
+      return;
+    }
+
   });
 };
 
@@ -442,42 +473,3 @@ const calculator = () => {
 };
 
 calculator();
-
-// Секция "Акции и спецпредложения", кнопка "Больше"
-const sentenceSection = () => {
-  const sentence = document.querySelector('.sentence');
-  const addSentenceBtn = document.querySelector('.add-sentence-btn'),
-  hiddenItems = document.querySelectorAll('.hidden-item'),
-  popupDiscount = document.querySelector('.popup-discount');
-
-  sentence.addEventListener('click', (event) => {
-    let target = event.target;
-
-    if (target.matches('.add-sentence-btn')) {
-      addSentenceBtn.style.display = 'none';
-      hiddenItems.forEach((elem) => {
-        elem.classList.remove('visible-sm-block');
-        elem.classList.remove('hidden');
-      });
-    }
-    if (target.matches('.discount-btn')) {
-      popupDiscount.style.display = 'block';
-    }
-  });
-
-  // Закрытие формы popupDiscount
-  popupDiscount.addEventListener('click', (event) => {
-    event.preventDefault();
-    let target = event.target;
-    if (target.matches('.popup-close')) {
-      popupDiscount.style.display = 'none';
-    }
-    // Закрываем форму по нажатию на подложку
-    if (target.matches('.popup-discount')) {
-      popupDiscount.style.display = 'none';
-    }
-  });
-
-};
-
-sentenceSection();
