@@ -5,6 +5,7 @@ const sendFormPopUp = () => {
 
   const discountForm = document.getElementById('discount-form'),
         consultationForm = document.getElementById('consultation-form'),
+        checkForm = document.getElementById('check-form'),
         message = document.getElementById('message');
 
   let yourQuestion; // вопрос из последней формы
@@ -35,10 +36,20 @@ const sendFormPopUp = () => {
       target.value = target.value.replace(/[^а-яё\s]/gi, '');
     }
   };
+  const checkCheckForm = (event) => {
+    let target = event.target;
+    if (target.matches('#phone_12')) {
+      target.value = target.value.replace(/(?<!^)\+|[^\d+]/g, '');
+    } else
+    if (target.matches('#name_12')) {
+      target.value = target.value.replace(/[^а-яё\s]/gi, '');
+    }
+  };
 
   // Обработчики событий корректного ввода данных в форму
   discountForm.addEventListener('input', checkDiscountForm);
   consultationForm.addEventListener('input', checkConsultationForm);
+  checkForm.addEventListener('input', checkCheckForm);
 
   // Функция очистки подписи под формой
   const updateForm = () => {
@@ -110,6 +121,40 @@ const sendFormPopUp = () => {
         console.error(error);
         statusMessage.textContent = errorMessage;
         clearConsultationForm();
+        setTimeout(updateForm, 3000);
+      });
+  });
+
+  // Функция очистки checkForm
+  const clearCheckForm = () => {      
+    const checkFormName = document.getElementById('name_12'),
+        checkFormPhone = document.getElementById('phone_12');
+    checkFormName.value = '';
+    checkFormPhone.value = '';
+  };
+  // checkForm
+  checkForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    checkForm.appendChild(statusMessage);
+    statusMessage.textContent = loadMessage;
+    const formData = new FormData(checkForm);
+    let body = {};
+    formData.forEach((val, key) => {
+      body[key] = val;
+    });
+    postData(body)
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error('status network not 200');
+        }
+        statusMessage.textContent = successMessage;
+        clearCheckForm();
+        setTimeout(updateForm, 3000);
+      })
+      .catch((error) => {
+        console.error(error);
+        statusMessage.textContent = errorMessage;
+        clearCheckForm();
         setTimeout(updateForm, 3000);
       });
   });
