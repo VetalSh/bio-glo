@@ -28,6 +28,7 @@ const togglePopUp = () => {
       return;
     }
     if (target.matches('.call-btn')) {
+      event.preventDefault();
       popupCall.style.display = 'block';
       return;
     }
