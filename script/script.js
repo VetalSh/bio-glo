@@ -1,17 +1,17 @@
 'use strict';
 
-// popup
+// Открытие и закрытие модальных окон
 const togglePopUp = () => {
   const body = document.querySelector('body'),
         popupCall = document.querySelector('.popup-call'),
-        popupClose = document.querySelector('.popup-close');
-
-  const addSentenceBtn = document.querySelector('.add-sentence-btn'),
+        popupClose = document.querySelector('.popup-close'),
+        addSentenceBtn = document.querySelector('.add-sentence-btn'),
         hiddenItems = document.querySelectorAll('.hidden-item'),
-        popupDiscount = document.querySelector('.popup-discount');
+        popupDiscount = document.querySelector('.popup-discount'),
+        popupCheck = document.querySelector('.popup-check'),
+        popupConsultation = document.querySelector('.popup-consultation');
   
   body.addEventListener('click', (event) => {
-    // event.preventDefault();
     let target = event.target;
     
     if (target.matches('.add-sentence-btn')) {
@@ -26,47 +26,52 @@ const togglePopUp = () => {
       popupDiscount.style.display = 'block';
       return;
     }
-
+    if (target.matches('.check-btn')) {
+      popupCheck.style.display = 'block';
+      return;
+    }
     if (target.matches('.call-btn')) {
       popupCall.style.display = 'block';
       return;
     }
-    if (target === popupClose) {
+    if (target.matches('.consultation-btn')) {
       event.preventDefault();
-      popupCall.style.display = 'none';
-      return;
-    } 
-    // Закрываем форму по нажатию на подложку
-    if (target.matches('.popup-call')) {
-      popupCall.style.display = 'none';
+      popupConsultation.style.display = 'block';
       return;
     }
-
-    if (target.matches('.popup-close')) {
+    // Закрываем форму по нажатию на X
+    if (target === popupClose || target.matches('.popup-close')) {
       event.preventDefault();
+      popupCall.style.display = 'none';
       popupDiscount.style.display = 'none';
+      popupCheck.style.display = 'none';
+      popupConsultation.style.display = 'none';
       return;
     }
     // Закрываем форму по нажатию на подложку
-    if (target.matches('.popup-discount')) {
+    if (target.matches('.popup-discount')
+      || target.matches('.popup-check')
+      || target.matches('.popup-call')
+      || target.matches('.popup-consultation')) {
+      popupCall.style.display = 'none';
       popupDiscount.style.display = 'none';
+      popupCheck.style.display = 'none';
+      popupConsultation.style.display = 'none';
       return;
     }
-
   });
 };
 
 togglePopUp();
 
-// send-ajax-form
+// Отправка данных на сервер с форм на сайте
 const sendForm = () => {
   const errorMessage = 'Что-то пошло не так...',
           loadMessage = 'Идет отправка...',
           successMessage = 'Спасибо! Мы скоро с вами свяжемся!';
 
   const form1 = document.getElementById('form1'),
-        form2 = document.getElementById('form2'),
-        discountForm = document.getElementById('discount-form');
+        form2 = document.getElementById('form2');
 
   const statusMessage = document.createElement('div');
   statusMessage.style.cssText = 'font-size: 2rem;';
@@ -87,20 +92,10 @@ const sendForm = () => {
       target.value = target.value.replace(/[^а-яё\s]/gi, '');
     }
   };
-  const checkDiscountForm = (event) => {
-    let target = event.target;
-    if (target.matches('#phone_11')) {
-      target.value = target.value.replace(/(?<!^)\+|[^\d+]/g, '');
-    } else
-    if (target.matches('#name_11')) {
-      target.value = target.value.replace(/[^а-яё\s]/gi, '');
-    }
-  };
 
   // Обработчики событий корректного ввода данных в форму
   form1.addEventListener('input', checkForm1);
   form2.addEventListener('input', checkForm2);
-  discountForm.addEventListener('input', checkDiscountForm);
 
   // Функция очистки подписи под формой
   const updateForm = () => {
@@ -169,40 +164,6 @@ const sendForm = () => {
         console.error(error);
         statusMessage.textContent = errorMessage;
         clearForm2();
-        setTimeout(updateForm, 3000);
-      });
-  });
-
-  // Функция очистки discountForm
-  const clearDiscountForm = () => {      
-    const discountFormName = document.getElementById('name_11'),
-    discountFormPhone = document.getElementById('phone_11');
-    discountFormName.value = '';
-    discountFormPhone.value = '';
-  };
-  // discountForm
-  discountForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    discountForm.appendChild(statusMessage);
-    statusMessage.textContent = loadMessage;
-    const formData = new FormData(discountForm);
-    let body = {};
-    formData.forEach((val, key) => {
-      body[key] = val;
-    });
-    postData(body)
-      .then((response) => {
-        if (response.status !== 200) {
-          throw new Error('status network not 200');
-        }
-        statusMessage.textContent = successMessage;
-        clearDiscountForm();
-        setTimeout(updateForm, 3000);
-      })
-      .catch((error) => {
-        console.error(error);
-        statusMessage.textContent = errorMessage;
-        clearDiscountForm();
         setTimeout(updateForm, 3000);
       });
   });
@@ -453,7 +414,6 @@ const calculator = () => {
   accordion.addEventListener('change', handlerCalculator);
 
   // Отправляем данные из формы на сервер в формате JSON
-
   // Функции проверки корректного ввода символов в формы
   const checkCalcForm = (event) => {
     let target = event.target;
@@ -519,3 +479,134 @@ const calculator = () => {
 };
 
 calculator();
+
+// Отправка данных на сервер с модальных окон
+const sendFormPopUp = () => {
+  const errorMessage = 'Что-то пошло не так...',
+        loadMessage = 'Идет отправка...',
+        successMessage = 'Спасибо! Мы скоро с вами свяжемся!';
+
+  const discountForm = document.getElementById('discount-form'),
+        consultationForm = document.getElementById('consultation-form'),
+        message = document.getElementById('message');
+
+  let yourQuestion; // вопрос из последней формы
+
+  message.addEventListener('input', () => {
+    yourQuestion = message.value;
+  });
+  
+  const statusMessage = document.createElement('div');
+  statusMessage.style.cssText = 'font-size: 2rem;';
+
+  // Функции проверки корректного ввода символов в формы
+  const checkDiscountForm = (event) => {
+    let target = event.target;
+    if (target.matches('#phone_11')) {
+      target.value = target.value.replace(/(?<!^)\+|[^\d+]/g, '');
+    } else
+    if (target.matches('#name_11')) {
+      target.value = target.value.replace(/[^а-яё\s]/gi, '');
+    }
+  };
+  const checkConsultationForm = (event) => {
+    let target = event.target;
+    if (target.matches('#phone_13')) {
+      target.value = target.value.replace(/(?<!^)\+|[^\d+]/g, '');
+    } else
+    if (target.matches('#name_13')) {
+      target.value = target.value.replace(/[^а-яё\s]/gi, '');
+    }
+  };
+
+  // Обработчики событий корректного ввода данных в форму
+  discountForm.addEventListener('input', checkDiscountForm);
+  consultationForm.addEventListener('input', checkConsultationForm);
+
+  // Функция очистки подписи под формой
+  const updateForm = () => {
+    statusMessage.textContent = '';
+  };
+ 
+  // Функция очистки discountForm
+  const clearDiscountForm = () => {      
+    const discountFormName = document.getElementById('name_11'),
+    discountFormPhone = document.getElementById('phone_11');
+    discountFormName.value = '';
+    discountFormPhone.value = '';
+  };
+  // discountForm
+  discountForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    discountForm.appendChild(statusMessage);
+    statusMessage.textContent = loadMessage;
+    const formData = new FormData(discountForm);
+    let body = {};
+    formData.forEach((val, key) => {
+      body[key] = val;
+    });
+    postData(body)
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error('status network not 200');
+        }
+        statusMessage.textContent = successMessage;
+        clearDiscountForm();
+        setTimeout(updateForm, 3000);
+      })
+      .catch((error) => {
+        console.error(error);
+        statusMessage.textContent = errorMessage;
+        clearDiscountForm();
+        setTimeout(updateForm, 3000);
+      });
+  });
+
+  // Функция очистки consultationForm
+  const clearConsultationForm = () => {      
+    const consultationFormName = document.getElementById('name_13'),
+    consultationFormPhone = document.getElementById('phone_13');
+    consultationFormName.value = '';
+    consultationFormPhone.value = '';
+  };
+  // consultationForm
+  consultationForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    consultationForm.appendChild(statusMessage);
+    statusMessage.textContent = loadMessage;
+    const formData = new FormData(consultationForm);
+    let body = {};
+    formData.forEach((val, key) => {
+      body[key] = val;
+    });
+    body.userQuestion = yourQuestion;
+    postData(body)
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error('status network not 200');
+        }
+        statusMessage.textContent = successMessage;
+        clearConsultationForm();
+        setTimeout(updateForm, 3000);
+      })
+      .catch((error) => {
+        console.error(error);
+        statusMessage.textContent = errorMessage;
+        clearConsultationForm();
+        setTimeout(updateForm, 3000);
+      });
+  });
+
+  const postData = (body) => {
+    return fetch('./server.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body),
+      credentials: 'include'
+    });
+  };
+};
+
+sendFormPopUp();
